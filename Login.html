@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>ورود</title>
+  <link rel="icon" type="image/png" href="/esfahan_card.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<style>
+  * {
+    font-family: Vazirmatn, Tahoma, sans-serif;
+  }
+
+  input,
+  button {
+    font-family: Vazirmatn, Tahoma, sans-serif;
+  }
+</style>
+<style>
+    body{
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        direction: rtl;
+    }
+</style>
+<script>
+    function toPersianDigits(value) {
+    return String(value)
+        .replace(/[0-9]/g, function (digit) {
+        return "۰۱۲۳۴۵۶۷۸۹"[Number(digit)];
+        })
+        .replace(/[٠-٩]/g, function (digit) {
+        return "۰۱۲۳۴۵۶۷۸۹"["٠١٢٣٤٥٦٧٨٩".indexOf(digit)];
+        });
+    }
+</script>
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: Vazirmatn, Tahoma, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    direction: rtl;
+  }
+
+  input,
+  button {
+    font-family: Vazirmatn, Tahoma, sans-serif;
+  }
+
+  input {
+    width: 200px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+  }
+
+  button {
+    background-color: gray;
+    color: white;
+    width: 120px;
+    height: 40px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button:hover,
+  button:active {
+    background-color: black;
+  }
+
+  #message {
+    min-height: 24px;
+    margin: 0;
+    text-align: center;
+  }
+</style>
+<div class="field">
+    <label for="username">نام کاربری</label>
+    <input
+    type="text"
+    id="username"
+    maxlength="10"
+    inputmode="numeric"
+    placeholder="نام کاربری خود را وارد کنید"
+    oninput="this.value = toPersianDigits(this.value).replace(/[^۰-۹]/g, '')"
+    >
+</div>
+<div class="field">
+    <label for="password">گذرواژه</label>
+    <input
+    type="password"
+    id="password"
+    maxlength="10"
+    inputmode="numeric"
+    placeholder="گذرواژه را وارد کنید"
+    oninput="this.value = toPersianDigits(this.value)"
+    >
+</div>
+<style>
+    .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 15px;
+  text-align: right;
+}
+
+.field input {
+  width: 310px;
+  height: 45px;
+  padding: 0 12px;
+  font-size: 15px;
+}
+</style>
+<script>
+    function checkLogin() {
+    const personnelCode = toPersianDigits(
+        document.getElementById("username").value.trim()
+    );
+    const password = toPersianDigits(
+        document.getElementById("password").value.trim()
+    );
+    const message = document.getElementById("message");
+    const managerPersonnelCode = "۱۲۷۶۶۹۹۰۷۷";
+    const managerPassword = "۶۷۶۵۷۶۳۷۳۷";
+    if (
+      personnelCode === managerPersonnelCode &&
+      password === managerPassword
+    ) {
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("userRole", "manager");
+      localStorage.setItem("username", personnelCode);
+      message.style.color = "green";
+      message.innerText = "ورود مدیر موفق بود";
+      window.location.href = "panel.html";
+      return;
+    }
+    const users =
+      JSON.parse(localStorage.getItem("users")) || [];
+    const foundUser = users.find(function (user) {
+      return (
+        user.personnelCode === personnelCode &&
+        user.password === password
+      );
+    });
+    if (foundUser) {
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("userRole", "user");
+      localStorage.setItem("username", personnelCode);
+      message.style.color = "green";
+      message.innerText = "ورود موفق بود";
+      window.location.href = "panel.html";
+    } else {
+      message.style.color = "red";
+      message.innerText =
+        "نام کاربری یا گذرواژه اشتباه است";
+    }
+  }
+</script>
+<script>
+  function forgotPassword() {
+    window.location.href = "forgotpassword.html";
+  }
+</script>
+<div class="button-group">
+  <button type="button" onclick="checkLogin()">
+    ورود
+  </button>
+
+  <button
+    id="forgotPassword"
+    type="button"
+    onclick="forgotPassword()"
+  >
+    فراموشی رمز عبور
+  </button>
+</div>
+<p id="message"></p>
+<style>
+    .button-group {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    }
+
+    .button-group button {
+    width: 150px;
+    height: 40px;
+    }
+
+    #message {
+    min-height: 24px;
+    margin: 0;
+    text-align: center;
+    }
+</style>
+</body>
+</html>

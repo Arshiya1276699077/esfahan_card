@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>پنل کاربری</title>
+  <link rel="icon" type="image/png" href="/esfahan_card.png">
+  <link rel="stylesheet" href="app.css">
+  <h1>صاحب حساب DC2747EAA1 .به سامانه مدیریت هوشمند خوش آمدید</h1>
+</head>
+<body>
+<div id="dateTimeBox">
+  <span id="weekDay"></span>
+  <span id="dayNumber"></span>
+  <span id="monthName"></span>
+  <span id="yearNumber"></span>
+  <span id="clockLabel">ساعت</span>
+  <span id="timeValue"></span>
+</div>
+
+<style>
+  #dateTimeBox {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    direction: rtl;
+    font-family: Vazirmatn, Tahoma, sans-serif;
+    font-size: 22px;
+    z-index: 9999;
+    background: white;
+    padding: 10px 14px;
+    border-radius: 8px;
+  }
+
+  #weekDay {
+    color: green;
+  }
+
+  #dayNumber {
+    color: black;
+  }
+
+  #monthName {
+    color: black;
+  }
+
+  #yearNumber {
+    color: black;
+  }
+
+  #clockLabel {
+    color: blackbrown;
+  }
+
+  #timeValue {
+    color: black;
+  }
+</style>
+
+<script>
+  function showPersianDateTime() {
+    const now = new Date();
+
+    const parts = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
+      timeZone: "Asia/Tehran",
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    }).formatToParts(now);
+
+    let weekDay = "";
+    let dayNumber = "";
+    let monthName = "";
+    let yearNumber = "";
+    let hour = "";
+    let minute = "";
+    let second = "";
+
+    parts.forEach(function (part) {
+      if (part.type === "weekday") weekDay = part.value;
+      if (part.type === "day") dayNumber = part.value;
+      if (part.type === "month") monthName = part.value;
+      if (part.type === "year") yearNumber = part.value;
+      if (part.type === "hour") hour = part.value;
+      if (part.type === "minute") minute = part.value;
+      if (part.type === "second") second = part.value;
+    });
+
+    document.getElementById("weekDay").textContent = weekDay;
+    document.getElementById("dayNumber").textContent = dayNumber;
+    document.getElementById("monthName").textContent = monthName;
+    document.getElementById("yearNumber").textContent = yearNumber + "،";
+    document.getElementById("timeValue").textContent =
+      hour + ":" + minute + ":" + second;
+  }
+
+  showPersianDateTime();
+  setInterval(showPersianDateTime, 1000);
+</script>
+<style>
+  * {
+    font-family: Vazirmatn, Tahoma, sans-serif;
+  }
+
+  input,
+  button {
+    font-family: Vazirmatn, Tahoma, sans-serif;
+  }
+</style>
+<style>
+    body{
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        direction: rtl;
+    }
+</style>
+<script>
+    function toPersianDigits(value) {
+    return value.replace(/\d/g, function (digit) {
+        return "۰۱۲۳۴۵۶۷۸۹"[Number(digit)];
+    });
+}
+</script>
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: Vazirmatn, Tahoma, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    direction: rtl;
+  }
+
+  input,
+  button {
+    font-family: Vazirmatn, Tahoma, sans-serif;
+  }
+
+  input {
+    width: 220px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+  }
+
+  button {
+    background-color: gray;
+    color: white;
+    width: 120px;
+    height: 40px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button:hover,
+  button:active {
+    background-color: black;
+  }
+
+  #message {
+    min-height: 24px;
+    margin: 0;
+    text-align: center;
+  }
+</style>
+<div id="numberBox">
+  <input
+    type="text"
+    id="mainNumberInput"
+    inputmode="numeric"
+    placeholder="موجودی حساب خود را وارد کنید"
+    oninput="this.value = toPersianDigits(this.value).replace(/[^۰-۹]/g, '')"
+  >
+
+  <button type="button" onclick="saveMainNumber()">
+    ذخیره
+  </button>
+</div>
+
+<p id="numberMessage"></p>
+
+<script>
+  function toPersianDigits(value) {
+    return String(value)
+      .replace(/[0-9]/g, function (digit) {
+        return "۰۱۲۳۴۵۶۷۸۹"[Number(digit)];
+      })
+      .replace(/[٠-٩]/g, function (digit) {
+        return "۰۱۲۳۴۵۶۷۸۹"["٠١٢٣٤٥٦٧٨٩".indexOf(digit)];
+      });
+  }
+    function toEnglishDigits(value) {
+    return String(value)
+        .replace(/[۰-۹]/g, function (digit) {
+        return "۰۱۲۳۴۵۶۷۸۹".indexOf(digit);
+        })
+        .replace(/[٠-٩]/g, function (digit) {
+        return "٠١٢٣٤٥٦٧٨٩".indexOf(digit);
+        });
+    }
+  function saveMainNumber() {
+    const input = document.getElementById("mainNumberInput");
+    const number = toPersianDigits(input.value.trim())
+      .replace(/[^۰-۹]/g, "");
+
+    if (number === "") {
+      document.getElementById("numberMessage").textContent =
+        "لطفاً موجودی را به ریال وارد کنید";
+      return;
+    }
+
+    localStorage.setItem("balance", toEnglishDigits(number));
+    showSavedNumber();
+  }
+
+  function showSavedNumber() {
+    const savedNumber = localStorage.getItem("balance");
+    const numberBox = document.getElementById("numberBox");
+    const message = document.getElementById("numberMessage");
+
+    if (savedNumber) {
+      numberBox.style.display = "none";
+      message.textContent =
+  "موجودی شما: " + Number(savedNumber).toLocaleString("fa-IR") + " ریال";
+    }
+  }
+
+  showSavedNumber();
+</script>
+<script>
+    function Add_Mojody() {
+        window.location.href = "AddMojody.html"
+    }
+</script>
+<script>
+    function Sabt_Riztarakonesh() {
+        window.location.href = "Sabt_Riztarakonesh.html"
+    }
+</script>
+<script>
+    function Menha_Mojody() {
+        window.location.href = "MenhaMojody.html"
+    }
+    function Khoroj() {
+        window.location.href = "Login.html"
+    }
+    function Riztarakonesh() {
+        window.location.href = "Riztarakonesh.html"
+    }
+</script>
+
+<button type="button" onclick="Add_Mojody()">
+    افزایش موجودی
+</button>
+<button type="button" onclick="Menha_Mojody()">
+    کسر موجودی
+</button>
+<button type="button" onclick="Sabt_Riztarakonesh()">
+    ثبت ریز تراکنش
+</button>
+<button type="button" onclick="Riztarakonesh()">
+    مشاهده ریز تراکنش
+</button>
+<button type="button" onclick="Khoroj()">
+    خروج
+</button>

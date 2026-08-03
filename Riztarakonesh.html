@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>مشاهده ریز تراکنش‌ها</title>
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="/esfahan_card.png"
+  >
+  <link rel="stylesheet" href="app.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Vazirmatn, Tahoma, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 30px 15px;
+      direction: rtl;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      width: min(100%, 1000px);
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .summary {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .summary-box {
+      min-width: 220px;
+      padding: 15px;
+      text-align: center;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+    }
+
+    .table-box {
+      overflow-x: auto;
+      background-color: white;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 850px;
+    }
+
+    th,
+    td {
+      padding: 12px 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #eeeeee;
+    }
+
+    tbody tr:hover {
+      background-color: #fafafa;
+    }
+
+    .withdrawal {
+      color: red;
+      font-weight: bold;
+    }
+
+    #emptyMessage {
+      display: none;
+      padding: 30px;
+      text-align: center;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    button {
+      min-width: 130px;
+      height: 42px;
+      padding: 0 15px;
+      border: none;
+      border-radius: 7px;
+      background-color: gray;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: black;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>ریز تراکنش‌ها</h1>
+
+    <div class="summary">
+      <div class="summary-box">
+        موجودی فعلی:
+        <strong id="balanceValue">۰</strong>
+        ریال
+      </div>
+
+      <div class="summary-box">
+        تعداد تراکنش‌ها:
+        <strong id="transactionCount">۰</strong>
+      </div>
+
+      <div class="summary-box">
+        مجموع برداشت‌ها:
+        <strong id="totalWithdrawals">۰</strong>
+        ریال
+      </div>
+    </div>
+
+    <div class="table-box" id="tableBox">
+      <table>
+        <thead>
+          <tr>
+            <th>ردیف</th>
+            <th>نوع</th>
+            <th>تعرفه</th>
+            <th>خط اتوبوس</th>
+            <th>مبدأ</th>
+            <th>مقصد</th>
+            <th>تاریخ</th>
+            <th>ساعت</th>
+          </tr>
+        </thead>
+
+        <tbody id="transactionTableBody"></tbody>
+      </table>
+    </div>
+
+    <p id="emptyMessage">
+      هنوز هیچ ریز تراکنشی ثبت نشده است.
+    </p>
+
+    <div class="buttons">
+      <button type="button" onclick="goBack()">
+        بازگشت
+      </button>
+
+      <button type="button" onclick="loadTransactions()">
+        تازه‌سازی
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    function toPersianNumber(value) {
+      return Number(value).toLocaleString("fa-IR");
+    }
+
+    function getTransactions() {
+      try {
+        const savedTransactions =
+          localStorage.getItem("transactions");
+
+        const transactions =
+          JSON.parse(savedTransactions || "[]");
+
+        return Array.isArray(transactions)
+          ? transactions
+          : [];
+      } catch (error) {
+        console.error(
+          "خطا در خواندن تراکنش‌ها:",
+          error
+        );
+
+        return [];
+      }
+    }
+
+    function createTableCell(text, className) {
+      const cell = document.createElement("td");
+
+      cell.textContent = text;
+
+      if (className) {
+        cell.className = className;
+      }
+
+      return cell;
+    }
+
+    function loadTransactions() {
+      const tableBody =
+        document.getElementById(
+          "transactionTableBody"
+        );
+
+      const tableBox =
+        document.getElementById("tableBox");
+
+      const emptyMessage =
+        document.getElementById("emptyMessage");
+
+      tableBody.textContent = "";
+
+      const transactions = getTransactions()
+        .slice()
+        .sort(function (first, second) {
+          return Number(second.id || 0) -
+                 Number(first.id || 0);
+        });
+
+      const balance = Number(
+        localStorage.getItem("balance") || "0"
+      );
+
+      document.getElementById(
+        "balanceValue"
+      ).textContent = toPersianNumber(balance);
+
+      document.getElementById(
+        "transactionCount"
+      ).textContent =
+        toPersianNumber(transactions.length);
+
+      let totalWithdrawals = 0;
+
+      transactions.forEach(function (
+        transaction,
+        index
+      ) {
+        const fare = Number(
+          transaction.fare || 0
+        );
+
+        if (transaction.type === "withdrawal") {
+          totalWithdrawals += fare;
+        }
+
+        const row = document.createElement("tr");
+
+        row.appendChild(
+          createTableCell(
+            toPersianNumber(index + 1)
+          )
+        );
+
+        row.appendChild(
+          createTableCell(
+            transaction.type === "withdrawal"
+              ? "برداشت"
+              : "واریز",
+            transaction.type === "withdrawal"
+              ? "withdrawal"
+              : ""
+          )
+        );
+
+        row.appendChild(
+          createTableCell(
+            toPersianNumber(fare) + " ریال"
+          )
+        );
+
+        row.appendChild(
+          createTableCell(
+            transaction.busLine || "-"
+          )
+        );
+
+        row.appendChild(
+          createTableCell(
+            transaction.origin || "-"
+          )
+        );
+
+        row.appendChild(
+          createTableCell(
+            transaction.destination || "-"
+          )
+        );
+
+        row.appendChild(
+          createTableCell(
+            transaction.date || "-"
+          )
+        );
+
+        row.appendChild(
+          createTableCell(
+            transaction.time || "-"
+          )
+        );
+
+        tableBody.appendChild(row);
+      });
+
+      document.getElementById(
+        "totalWithdrawals"
+      ).textContent =
+        toPersianNumber(totalWithdrawals);
+
+      if (transactions.length === 0) {
+        tableBox.style.display = "none";
+        emptyMessage.style.display = "block";
+      } else {
+        tableBox.style.display = "block";
+        emptyMessage.style.display = "none";
+      }
+    }
+
+    function goBack() {
+      window.location.href = "Panel.html";
+    }
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      loadTransactions
+    );
+  </script>
+
+</body>
+</html>

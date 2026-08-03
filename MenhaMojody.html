@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>کسر موجودی</title>
+  <link rel="icon" type="image/png" href="/esfahan_card.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<style>
+  * {
+    font-family: Vazirmatn, Tahoma, sans-serif;
+  }
+
+  input,
+  button {
+    font-family: Vazirmatn, Tahoma, sans-serif;
+  }
+</style>
+<style>
+    body{
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        direction: rtl;
+    }
+</style>
+<script>
+    function toPersianDigits(value) {
+    return value.replace(/\d/g, function (digit) {
+        return "۰۱۲۳۴۵۶۷۸۹"[Number(digit)];
+    });
+}
+</script>
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: Vazirmatn, Tahoma, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    direction: rtl;
+  }
+
+  input,
+  button {
+    font-family: Vazirmatn, Tahoma, sans-serif;
+  }
+
+  input {
+    width: 220px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+  }
+
+  button {
+    background-color: gray;
+    color: white;
+    width: 120px;
+    height: 40px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button:hover,
+  button:active {
+    background-color: black;
+  }
+
+  #message {
+    min-height: 24px;
+    margin: 0;
+    text-align: center;
+  }
+</style>
+<script>
+    function toEnglishDigits(value) {
+    return String(value)
+        .replace(/[۰-۹]/g, function (digit) {
+        return "۰۱۲۳۴۵۶۷۸۹".indexOf(digit);
+        })
+        .replace(/[٠-٩]/g, function (digit) {
+        return "٠١٢٣٤٥٦٧٨٩".indexOf(digit);
+        });
+    }
+
+    function addToBalance() {
+    const input = document.getElementById("amountInput");
+    const amount = Number(toEnglishDigits(input.value.trim()));
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+        alert("لطفاً یک مبلغ معتبر وارد کنید");
+        return;
+    }
+
+    const currentBalance = Number(
+        localStorage.getItem("balance") || "0"
+    );
+
+    const newBalance = currentBalance - amount;
+
+    localStorage.setItem("balance", String(newBalance));
+
+    input.value = "";
+    showBalance();
+    }
+
+    function showBalance() {
+    const balance = Number(
+        localStorage.getItem("balance") || "0"
+    );
+
+    const balanceElement =
+        document.getElementById("balanceValue");
+
+    if (balanceElement) {
+        balanceElement.textContent =
+        balance.toLocaleString("fa-IR");
+    }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+    const oldBalance = localStorage.getItem("mainNumber");
+    const newBalance = localStorage.getItem("balance");
+
+    if (newBalance === null && oldBalance !== null) {
+        localStorage.setItem(
+        "balance",
+        toEnglishDigits(oldBalance)
+        );
+    }
+
+    showBalance();
+    });
+</script>
+<script>
+    function Bazgasht() {
+        window.location.href = "Panel.html"
+    }
+</script>
+<input
+type="text"
+id="amountInput"
+inputmode="numeric"
+placeholder="لطفاً مبلغ را وارد کنید"
+oninput="this.value = toPersianDigits(this.value).replace(/[^۰-۹]/g, '')"
+>
+<button type="button" onclick="addToBalance()">
+    کسر موجودی
+</button>
+<p>
+  موجودی:
+  <span id="balanceValue">۰</span>
+  ریال
+</p>
+<button type="button" onclick="Bazgasht()">
+    بازگشت
+</button>
